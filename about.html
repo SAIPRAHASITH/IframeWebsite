@@ -1,33 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TD6795QH');</script>
+<!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Sample E-commerce</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
+    <title>Cross-Domain Parent and Iframe Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .parent-section {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .iframe-container {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        input {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .message-log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .domain-indicator {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00d2ff;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="cart.html">Cart</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TD6795QH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <div class="container">
+        <h1>🌐 Cross-Domain Communication Demo</h1>
+        
+        <div class="info-box">
+            <strong>📋 What this demonstrates:</strong><br>
+            • Parent domain: <code>parent-domain.example</code><br>
+            • Iframe domain: <code>child-domain.example</code><br>
+            • Cross-domain postMessage communication<br>
+            • Security considerations and CORS handling
+        </div>
+        
+        <div class="parent-section">
+            <h2>🏠 Parent Domain (parent-domain.example)</h2>
+            <div class="controls">
+                <input type="text" id="messageInput" placeholder="Enter message to send to iframe..." value="Hello from parent!">
+                <button onclick="sendMessageToIframe()">📤 Send to Iframe</button>
+                <button onclick="changeIframeContent()">🔄 Change Iframe Content</button>
+                <button onclick="clearLog()">🗑️ Clear Log</button>
+            </div>
+            <div class="message-log" id="messageLog">
+                <div>🚀 Parent domain loaded. Waiting for iframe...</div>
+            </div>
+        </div>
+        
+        <div class="iframe-container">
+            <div class="domain-indicator">child-domain.example</div>
+            <h3>🖼️ Cross-Domain Iframe</h3>
+            <iframe id="crossDomainIframe" srcdoc='
+<!DOCTYPE html>
+<html>
+<head>
+                <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5CBSKZNC');</script>
+<!-- End Google Tag Manager -->
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .iframe-content {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+        input {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 15px;
+            margin: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        .message-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5CBSKZNC"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <div class="iframe-content">
+        <h2>🎯 Iframe Content</h2>
+        <p><strong>Domain:</strong> child-domain.example</p>
+        <div class="message-display" id="iframeMessages">
+            <div>🎉 Iframe loaded and ready for communication!</div>
+        </div>
+        <input type="text" id="iframeInput" placeholder="Reply to parent..." value="Hello from iframe!">
+        <br>
+        <button onclick="sendToParent()">📤 Send to Parent</button>
+        <button onclick="requestData()">📊 Request Parent Data</button>
+    </div>
     
-    <main>
-        <h1>About Us</h1>
-        <p>We are a leading e-commerce company offering the best products at the best prices.</p>
-    </main>
+    <script>
+        // Iframe JavaScript - simulating child-domain.example
+        function sendToParent() {
+            const message = document.getElementById("iframeInput").value;
+            window.parent.postMessage({
+                type: "iframe-message",
+                data: message,
+                timestamp: new Date().toLocaleTimeString(),
+                source: "child-domain.example"
+            }, "*");
+            
+            logMessage("📤 Sent to parent: " + message);
+        }
+        
+        function requestData() {
+            window.parent.postMessage({
+                type: "data-request",
+                request: "user-info",
+                timestamp: new Date().toLocaleTimeString(),
+                source: "child-domain.example"
+            }, "*");
+            
+            logMessage("📊 Requested data from parent");
+        }
+        
+        function logMessage(msg) {
+            const log = document.getElementById("iframeMessages");
+            const div = document.createElement("div");
+            div.textContent = new Date().toLocaleTimeString() + " - " + msg;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Listen for messages from parent
+        window.addEventListener("message", function(event) {
+            // In real scenarios, validate event.origin for security
+            logMessage("📥 Received: " + JSON.stringify(event.data));
+            
+            if (event.data.type === "parent-message") {
+                document.querySelector("h2").textContent = "🎯 " + event.data.data;
+            }
+        });
+        
+        // Notify parent that iframe is ready
+        window.addEventListener("load", function() {
+            window.parent.postMessage({
+                type: "iframe-ready",
+                timestamp: new Date().toLocaleTimeString(),
+                source: "child-domain.example"
+            }, "*");
+        });
+    </script>
+</body>
+</html>
+            '></iframe>
+        </div>
+    </div>
 
-    <footer>
-        <p>&copy; 2024 Sample E-commerce</p>
-    </footer>
+    <script>
+        // Parent JavaScript - simulating parent-domain.example
+        function sendMessageToIframe() {
+            const message = document.getElementById('messageInput').value;
+            const iframe = document.getElementById('crossDomainIframe');
+            
+            iframe.contentWindow.postMessage({
+                type: 'parent-message',
+                data: message,
+                timestamp: new Date().toLocaleTimeString(),
+                source: 'parent-domain.example'
+            }, '*');
+            
+            logMessage('📤 Sent to iframe: ' + message);
+        }
+        
+        function changeIframeContent() {
+            const iframe = document.getElementById('crossDomainIframe');
+            iframe.contentWindow.postMessage({
+                type: 'parent-message',
+                data: 'Content Updated! 🚀',
+                timestamp: new Date().toLocaleTimeString(),
+                source: 'parent-domain.example'
+            }, '*');
+            
+            logMessage('🔄 Changed iframe content');
+        }
+        
+        function clearLog() {
+            document.getElementById('messageLog').innerHTML = '<div>🧹 Log cleared</div>';
+        }
+        
+        function logMessage(msg) {
+            const log = document.getElementById('messageLog');
+            const div = document.createElement('div');
+            div.textContent = new Date().toLocaleTimeString() + ' - ' + msg;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Listen for messages from iframe
+        window.addEventListener('message', function(event) {
+            // In production, always validate event.origin for security!
+            // if (event.origin !== 'https://trusted-domain.com') return;
+            
+            logMessage('📥 Received from iframe: ' + JSON.stringify(event.data));
+            
+            if (event.data.type === 'data-request') {
+                // Simulate sending data back to iframe
+                const iframe = document.getElementById('crossDomainIframe');
+                iframe.contentWindow.postMessage({
+                    type: 'data-response',
+                    data: {
+                        user: 'John Doe',
+                        role: 'Developer',
+                        permissions: ['read', 'write']
+                    },
+                    timestamp: new Date().toLocaleTimeString(),
+                    source: 'parent-domain.example'
+                }, '*');
+                
+                logMessage('📊 Sent user data to iframe');
+            }
+        });
+        
+        // Log when page loads
+        window.addEventListener('load', function() {
+            logMessage('🏠 Parent domain loaded');
+        });
+    </script>
 </body>
 </html>
